@@ -16,5 +16,23 @@ def toEdges():
             edges.write(line)
     edges.close()
 
+def sequence():
+    seq = {}
+    edges = open('/Users/cherry/Desktop/t0.txt','r')
+    i = 0
+    for edge in edges:
+        edge = edge.strip()
+        elemts = edge.split(',')
+        for elemt in elemts:
+
+            if not seq.has_key(elemt):
+                seq[elemt] = i
+                i = i + 1
+    return seq
+
+
+
 if __name__ == '__main__':
-    toEdges()
+    # toEdges()
+    seq = sequence()
+    print seq

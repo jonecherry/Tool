@@ -1,6 +1,5 @@
 import xlrd
 
+s = {1:2,2:22}
 
-for i in range(2):
-    print i
-
+print s.keys()[1]
