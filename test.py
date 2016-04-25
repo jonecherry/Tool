@@ -1,5 +1,12 @@
 import xlrd
 
-s = {1:2,2:22}
+array = [[1,2],[3,4]]
+out = open('/Users/cherry/Desktop/juzhen','w')
+for i in range(len(array)):
+    for j in range(len(array[i])):
+        out.write('%s'%(array[i][j]))
+        out.write('\t')
 
-print s.keys()[1]
+
+    out.write('\n')
+out.close()
