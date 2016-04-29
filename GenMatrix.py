@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
+#coding=utf-8
 
 import MySQLdb
 import os
@@ -12,14 +12,54 @@ def jiaoji(lists) :
     for list in lists :
         temp=[i for i in list if i in temp ]
     return temp
+def friendsnum():
+    minnum = 5
+    friendsnum = []
+    try:
+        conn=MySQLdb.connect(host='127.0.0.1',user='root',passwd='123456',port=3306, charset='utf8')
+        cur=conn.cursor()
+        cur.execute('set interactive_timeout=96*3600')
+        conn.select_db('bbsdata')
 
+        for tb in ['l4']:
+
+            cur.execute("SELECT uid,friends FROM "+tb)
+            slist=cur.fetchall()
+            for line in slist:
+                uid=int(line[0])
+                friends=line[1]
+                friends=friends.strip(';')
+                flist=friends.split(';')
+                numoffriends = len(flist)
+                if numoffriends >= minnum:
+
+                    friendsnum.append(uid)
+
+
+    except MySQLdb.Error,e:
+        print "Mysql Error %d: %s" % (e.args[0], e.args[1])
+
+    finally:
+        cur.close()
+        conn.close()
+
+    return friendsnum
+
+def qujiaoji(unionNodes,umatch):
+    slice = []
+    for node in unionNodes:
+        if node in umatch:
+            slice.append(int(node))
+            if len(slice)>=100:
+                break
+    return slice
 
 
 def getlist(db):
     distinct_all=[]
     edges=[]
     try:
-        conn=MySQLdb.connect(host='127.0.0.1',user='root',passwd='123456',port=3306, charset='utf8')   
+        conn=MySQLdb.connect(host='127.0.0.1',user='root',passwd='123456',port=3306, charset='utf8')
         cur=conn.cursor()
         cur.execute('set interactive_timeout=96*3600')
         conn.select_db(db)
@@ -33,15 +73,15 @@ def getlist(db):
             print '%s cases in total.'%(len(slist))
             for line in slist:
                 uid=line[0]
-                if str(uid) not in distinct_all:
-                    distinct_all.append(str(uid))
+                if uid not in distinct_all:
+                    distinct_all.append(uid)
                 friends=line[1]
                 friends=friends.strip(';')
                 flist=friends.split(';')
                 for friend in flist:
                     if friend not in distinct_all :
                         distinct_all.append(friend)
-                    edges.append((friend,str(uid)))
+                    edges.append((friend,uid))
             
     except MySQLdb.Error,e:
         print "Mysql Error %d: %s" % (e.args[0], e.args[1])
@@ -77,15 +117,20 @@ if __name__=='__main__':
         edgelists[db]=temp[1]
     
     unionNodes = jiaoji(addset)
-    
-    slice = sample(unionNodes,1000)
+    print unionNodes
+    umatch = friendsnum()
+    print umatch
+    slice = qujiaoji(unionNodes,umatch)
+    print slice
+
+
     d = len(slice)
     
     print 'there are '+str(d)+' users in all databases sampled'
     print 'generating index for uid...'
     NodesIndex = open (os.path.join(time_stamp_folder,'NodeIndex.csv'),'w')
     for i in range(d):
-        aaa = str(i)+':'+slice[i]+'\n'
+        aaa = str(i)+':'+str(slice[i])+'\n'
         NodesIndex.write(aaa)
     NodesIndex.close()    
     print 'generating matrix...'
