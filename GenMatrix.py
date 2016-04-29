@@ -20,6 +20,7 @@ def friendsnum():
         cur=conn.cursor()
         cur.execute('set interactive_timeout=96*3600')
         conn.select_db('bbsdata')
+        # conn.select_db('test1')
 
         for tb in ['l4']:
 
@@ -50,7 +51,7 @@ def qujiaoji(unionNodes,umatch):
     for node in unionNodes:
         if node in umatch:
             slice.append(int(node))
-            if len(slice)>=100:
+            if len(slice)>=10:
                 break
     return slice
 
@@ -72,15 +73,29 @@ def getlist(db):
         #        print l3list
             print '%s cases in total.'%(len(slist))
             for line in slist:
-                uid=line[0]
+
+                uid=str(line[0])
+                uid = uid.encode("utf-8")
+                uid = int(uid)
                 if uid not in distinct_all:
                     distinct_all.append(uid)
                 friends=line[1]
                 friends=friends.strip(';')
                 flist=friends.split(';')
+                # print flist
+                # print '-----------------distinctall----------------------'
+                # print distinct_all
                 for friend in flist:
+                    friend = friend.encode("utf-8")
+
+                    # friend = int(friend)
+                    # print friend
                     if friend not in distinct_all :
+                        # print friend
                         distinct_all.append(friend)
+                    # print friend
+
+
                     edges.append((friend,uid))
             
     except MySQLdb.Error,e:
@@ -112,15 +127,19 @@ if __name__=='__main__':
     addset=[]
     edgelists={}
     for db in ['bbsdata','bbsdata_0306']:
+    # for db in ['test1','test2']:
         temp = getlist(db)
         addset.append(temp[0])
         edgelists[db]=temp[1]
     
     unionNodes = jiaoji(addset)
+    print '------------unionnodes-------------'
     print unionNodes
     umatch = friendsnum()
+    print '------------度满足条件的点--------'
     print umatch
     slice = qujiaoji(unionNodes,umatch)
+    print '------------交集-----------------'
     print slice
 
 
@@ -134,8 +153,14 @@ if __name__=='__main__':
         NodesIndex.write(aaa)
     NodesIndex.close()    
     print 'generating matrix...'
+
     for key in edgelists:
+
         edgelist = edgelists[key]
+        print '--------------边-------------------'
+        print edgelist
+        print '-----------------样本-------------'
+        print slice
         if not os.path.exists(os.path.join(time_stamp_folder,key)):
             os.mkdir(os.path.join(time_stamp_folder,key))
         matrixFile = open(os.path.join(time_stamp_folder,key,'matrix_Di.csv'),'a')   
