@@ -15,7 +15,7 @@ count = len(f.readlines())
 for i in range(count):
     line = linecache.getline('Network/2016_05_06_23_16_45/Nodeindex.csv',i+1)
     elements = line.split(':')
-    cur.execute('SELECT xb,hylx,fwl,sr,jf,jq,hy,yhz,zxsj FROM bbsdata_0326.l4 where uid ='+ elements[1])
+    cur.execute('SELECT xb,hylx,fwl,sr,jf,jq,hy,yhz,zxsj FROM bbsdata.l4 where uid ='+ elements[1])
     slist=cur.fetchall()
     # print slist[0][0]
 
@@ -72,7 +72,10 @@ for i in range(count):
     jinqian = str(jinqian)
 
     haoyoushu = slist[0][6].encode('utf-8')
-    haoyoushu = str(haoyoushu)
+    if str(haoyoushu).strip()=='':
+        haoyoushu = 0
+    else:
+        haoyoushu = str(haoyoushu)
 
     yonghuzu = slist[0][7].encode('utf-8')
     yonghuzudic = {'未晋级':0,'托儿所':1,'幼儿园':2,'小学':3,'初中':4,'高中':5,'大专':6,'预科':7,'本科':8,'硕士':9,'博士':10}
@@ -85,8 +88,17 @@ for i in range(count):
     yonghuzu = str(yonghuzu)
 
     zaixianshichang = slist[0][8].encode('utf-8')
+    if str(zaixianshichang).strip()=='':
+        zaixianshichang = 0
     zaixianshichang = str(zaixianshichang)
 
+    print i
+    print elements[1]
     temp = xingbie+' '+huiyuanleixing+' '+fangwenliang+' '+age+' '+jifen+' '+jinqian+' '+haoyoushu+' '+yonghuzu+' '+zaixianshichang+'\n'
+    # temp = xingbie+','+huiyuanleixing+','+fangwenliang+','+age+','+jifen+','+jinqian+','+haoyoushu+','+yonghuzu+','+zaixianshichang+'\n'
+
+    # temp = temp.strip(',')
+    # print temp[3:7]
+    # print '第一个元素'
     print temp
     property.write(temp)
