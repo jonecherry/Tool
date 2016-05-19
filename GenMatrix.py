@@ -74,7 +74,7 @@ def getlist(db):
         for tb in ['l4']:
             
             print 'reading '+db+'.'+tb+'...'
-            cur.execute("SELECT uid,friends FROM "+tb)
+            cur.execute("SELECT uid,friends FROM "+tb+" WHERE uid IN (SELECT uid FROM hasfriends2)")
             slist=cur.fetchall()
         #        print l3list
             print '%s cases in total.'%(len(slist))
@@ -147,7 +147,8 @@ if __name__=='__main__':
     umatch = friendsnum()
     # print '------------度满足条件的点--------'
     # print umatch
-    slice = qujiaoji(unionNodes,umatch)
+    # slice = qujiaoji(unionNodes,umatch)
+    slice = unionNodes
     print '------------样本-----------------'
     print slice
 
