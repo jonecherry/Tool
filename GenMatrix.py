@@ -74,7 +74,7 @@ def getlist(db):
         for tb in ['l4']:
             
             print 'reading '+db+'.'+tb+'...'
-            cur.execute("SELECT uid,friends FROM "+tb+" WHERE uid IN (SELECT uid FROM hasfriends2)")
+            cur.execute("SELECT uid,friends FROM "+tb+" WHERE uid IN (SELECT uid FROM bingbingusers)")
             slist=cur.fetchall()
         #        print l3list
             print '%s cases in total.'%(len(slist))
